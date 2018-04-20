@@ -26,6 +26,10 @@ class PacmanProblem(search.Problem):
 
     def goal_test(self, state):
         """ Given a state, checks if this is the goal state, compares to the created goal state"""
+        for row in state:
+            if 11 in row or 21 in row or 31 in row or 41 in row or 51 in row or 71 in row:
+                return False
+        return True
 
     def h(self, node):
         """ This is the heuristic. It gets a node (not a state,

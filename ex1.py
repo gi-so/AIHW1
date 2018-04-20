@@ -87,7 +87,8 @@ class PacmanProblem(search.Problem):
                 state[packman_row + 1][packman_col] = 88
                 packman_row = packman_row + 1
         ghost_action = ""
-        for i in ghosts.keys():
+        ghost_order = [50, 20, 30, 40]
+        for i in ghost_order:
             if ghosts[i][0] == None:
                 continue
             ghost_row = ghosts[i][0]

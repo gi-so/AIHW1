@@ -44,8 +44,22 @@ class PacmanProblem(search.Problem):
         return row, col
 
     def manhattan_distance(self, state, ghost_row, ghost_col, packman_row, packman_col):
-    #ghost cant move into a wall or another ghost
-
+        distance = {}
+        distance["R"] = abs(packman_row - ghost_row) + abs(packman_col - ghost_col + 1)
+        distance["L"] = abs(packman_row - ghost_row) + abs(packman_col - ghost_col - 1)
+        distance["D"] = abs(packman_row - ghost_row + 1) + abs(packman_col - ghost_col)
+        distance["U"] = abs(packman_row - ghost_row - 1) + abs(packman_col - ghost_col)
+        smallest = min(distance.items(), key=lambda x: x[1])[0]
+        for i in range(4):
+            if distance["R"] == distance[smallest] and self.state[ghost_row][ghost_col + 1] == (77 or 66 or 11 or 10):
+                return "R"
+            elif distance["D"] == distance[smallest] and self.state[ghost_row + 1][ghost_col] == (77 or 66 or 11 or 10):
+                return "D"
+            elif distance["L"] == distance[smallest] and self.state[ghost_row][ghost_col - 1] == (77 or 66 or 11 or 10):
+                return "L"
+            elif distance["U"] == distance[smallest] and self.state[ghost_row - 1][ghost_col] == (77 or 66 or 11 or 10):
+                return "U"
+            distance.pop(smallest)
 
     def result(self, state, action):
         """Return the state that results from executing the given
@@ -141,7 +155,7 @@ class PacmanProblem(search.Problem):
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = 11
 
-        return state
+        return tuple(state)
 
 
     def goal_test(self, state):

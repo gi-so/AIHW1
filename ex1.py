@@ -19,7 +19,7 @@ class PacmanProblem(search.Problem):
         many actions, consider yielding them one at a time in an
         iterator, rather than building them all at once."""
         allowed_lst = []
-        packman_row, packman_col = self.find_row_col(self, state, 66)
+        packman_row, packman_col = self.find_row_col(state, 66)
         allowed_field = (10, 11, 71, 77)        #Should I takeo out 71 or 77?
         # Need to know if there are always walls around or if we have to check the size of the state to not throwing an error
         if state[packman_row + 1][packman_col] in allowed_field:
@@ -88,8 +88,8 @@ class PacmanProblem(search.Problem):
              state[packman_row][packman_col] = 10
              state[packman_row + row_mov][packman_col + col_mov] = 66
         elif state[packman_row + row_mov][packman_col + col_mov] == 99:
-             pass
-         else:
+            pass
+        else:
             state[packman_row][packman_col] = 10
             state[packman_row + row_mov][packman_col + col_mov] = 88
         packman_row = packman_row + row_mov

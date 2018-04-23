@@ -3,7 +3,7 @@ import random
 import math
 
 
-ids = ["111111111", "111111111"]
+ids = ["935885178", "203609177"]
 
 
 class PacmanProblem(search.Problem):
@@ -44,6 +44,8 @@ class PacmanProblem(search.Problem):
         return row, col
 
     def manhattan_distance(self, state, ghost_row, ghost_col, packman_row, packman_col):
+    #ghost cant move into a wall or another ghost
+
 
     def result(self, state, action):
         """Return the state that results from executing the given
@@ -57,50 +59,29 @@ class PacmanProblem(search.Problem):
                 ghosts[i][0], ghosts[i][1] = self.find_row_col(self.state, i+1)
 
         state = list(state)
+        row_mov = 0
+        col_mov = 0
         if action == "R":
-            if state[packman_row][packman_col + 1] == 11 or 10:
-                state[packman_row][packman_col] = 10
-                state[packman_row][packman_col + 1] = 66
-                packman_col = packman_col + 1
-            elif state[packman_row][packman_col + 1] == 99:
-                pass
-            else:
-                state[packman_row][packman_col] = 10
-                state[packman_row][packman_col + 1] = 88
-                packman_col = packman_col + 1
+            col_mov = 1
         elif action == "L":
-            if state[packman_row][packman_col - 1] == 11 or 10:
-                state[packman_row][packman_col] = 10
-                state[packman_row][packman_col - 1] = 66
-                packman_col = packman_col - 1
-            elif state[packman_row][packman_col - 1] == 99:
-                pass
-            else:
-                state[packman_row][packman_col] = 10
-                state[packman_row][packman_col - 1] = 88
-                packman_col = packman_col - 1
+            col_mov = (-1)
         elif action == "U":
-            if state[packman_row - 1][packman_col] == 11 or 10:
-                state[packman_row][packman_col] = 10
-                state[packman_row - 1][packman_col] = 66
-                packman_row = packman_row - 1
-            elif state[packman_row - 1][packman_col] == 99:
-                pass
-            else:
-                state[packman_row][packman_col] = 10
-                state[packman_row - 1][packman_col] = 88
-                packman_row = packman_row - 1
-        elif action == "D":
-            if state[packman_row + 1][packman_col] == 11 or 10:
-                state[packman_row][packman_col] = 10
-                state[packman_row + 1][packman_col] = 66
-                packman_row = packman_row + 1
-            elif state[packman_row + 1][packman_col] == 99:
-                pass
-            else:
-                state[packman_row][packman_col] = 10
-                state[packman_row + 1][packman_col] = 88
-                packman_row = packman_row + 1
+            row_mov = (-1)
+        else:
+            row_mov = 1
+
+        if state[packman_row + row_mov][packman_col + col_mov] == 11 or 10:
+             state[packman_row][packman_col] = 10
+             state[packman_row + row_mov][packman_col + col_mov] = 66
+        elif state[packman_row + row_mov][packman_col + col_mov] == 99:
+             pass
+         else:
+            state[packman_row][packman_col] = 10
+            state[packman_row + row_mov][packman_col + col_mov] = 88
+        packman_row = packman_row + row_mov
+        packman_col = packman_col + col_mov
+
+
         ghost_action = ""
         ghost_order = [50, 20, 30, 40]
         for i in ghost_order:
@@ -110,42 +91,55 @@ class PacmanProblem(search.Problem):
             ghost_col = ghosts[i][1]
             ghost_action = self.manhattan_distance(self, state, ghost_row, ghost_col, packman_row, packman_col)
 
+            row_mov = 0
+            col_mov = 0
             if ghost_action == "R":
-                if state[ghost_row][ghost_col + 1] == 11 or 10:
-                    state[ghost_row][ghost_col] = 10
-                    state[ghost_row][ghost_col + 1] = 66
-                elif state[ghost_row][ghost_col + 1] == 99:
-                    pass
-                else:
-                    state[ghost_row][ghost_col] = 10
-                    state[ghost_row][ghost_col + 1] = 88
+                col_mov = 1
             elif ghost_action == "L":
-                if state[ghost_row][ghost_col - 1] == 11 or 10:
-                    state[ghost_row][ghost_col] = 10
-                    state[ghost_row][ghost_col - 1] = 66
-                elif state[ghost_row][ghost_col - 1] == 99:
-                    pass
-                else:
-                    state[ghost_row][ghost_col] = 10
-                    state[ghost_row][ghost_col - 1] = 88
+                col_mov = (-1)
             elif ghost_action == "U":
-                if state[ghost_row - 1][ghost_col] == 11 or 10:
+                row_mov = (-1)
+            else:
+                row_mov = 1
+
+            if state[ghost_row + row_mov][ghost_col + col_mov] == 66:
+                state[ghost_row + row_mov][ghost_col + col_mov] = 88
+                break
+            elif state[ghost_row + row_mov][ghost_col + col_mov] == 10:
+                if i in ghost_order:
                     state[ghost_row][ghost_col] = 10
-                    state[ghost_row - 1][ghost_col] = 66
-                elif state[ghost_row - 1][ghost_col] == 99:
-                    pass
+                    state[ghost_row + row_mov][ghost_col + col_mov] = i
                 else:
+                    state[ghost_row][ghost_col] = 11
+                    state[ghost_row + row_mov][ghost_col + col_mov] = i
+            elif state[ghost_row + row_mov][ghost_col + col_mov] == 11:
+                if i in ghost_order:
                     state[ghost_row][ghost_col] = 10
-                    state[ghost_row - 1][ghost_col] = 88
-            elif ghost_row == "D":
-                if state[ghost_row + 1][ghost_col] == 11 or 10:
-                    state[ghost_row][ghost_col] = 10
-                    state[ghost_row + 1][ghost_col] = 66
-                elif state[ghost_row + 1][ghost_col] == 99:
-                    pass
+                    state[ghost_row + row_mov][ghost_col + col_mov] = i+1
                 else:
+                    state[ghost_row][ghost_col] = 11
+                    state[ghost_row + row_mov][ghost_col + col_mov] = i+1
+            elif state[ghost_row + row_mov][ghost_col + col_mov] == 77:
+                if i in ghost_order:
                     state[ghost_row][ghost_col] = 10
-                    state[ghost_row + 1][ghost_col] = 88
+                    state[ghost_row + row_mov][ghost_col + col_mov] = 10
+                else:
+                    state[ghost_row][ghost_col] = 11
+                    state[ghost_row + row_mov][ghost_col + col_mov] = 10
+            elif state[ghost_row + row_mov][ghost_col + col_mov] == 77:
+                if i in ghost_order:
+                    state[ghost_row][ghost_col] = 10
+                    state[ghost_row + row_mov][ghost_col + col_mov] = 10
+                else:
+                    state[ghost_row][ghost_col] = 11
+                    state[ghost_row + row_mov][ghost_col + col_mov] = 10
+            elif state[ghost_row + row_mov][ghost_col + col_mov] == 71:
+                if i in ghost_order:
+                    state[ghost_row][ghost_col] = 10
+                    state[ghost_row + row_mov][ghost_col + col_mov] = 11
+                else:
+                    state[ghost_row][ghost_col] = 11
+                    state[ghost_row + row_mov][ghost_col + col_mov] = 11
 
         return state
 

@@ -7,12 +7,31 @@ ids = ["935885178", "203609177"]
 
 
 class PacmanProblem(search.Problem):
+
+    def find_row_col(self, state, agent):
+        a_row = None
+        a_col = None
+        for row in state:
+            if agent in row:
+                a_row = state.index(row)
+                a_col = row.index(agent)
+        return a_row, a_col
+
+    def point_sum(self, state):
+        counter = 0
+        for row in state:
+            for col in row:
+                if state[row][col] == 11 or 71 or 51 or 41 or 31 or 21:
+                    counter = counter + 1
+        return counter
+
     """This class implements a spaceship problem"""
     def __init__(self, initial):
         """Don't forget to set the goal or implement the goal test
         You should change the initial to your own representation"""
         search.Problem.__init__(self, initial)
-        
+
+
     def actions(self, state):
         """Return the actions that can be executed in the given
         state. The result would typically be a tuple, but if there are
@@ -20,28 +39,19 @@ class PacmanProblem(search.Problem):
         iterator, rather than building them all at once."""
         allowed_lst = []
         packman_row, packman_col = self.find_row_col(state, 66)
-        allowed_field = (10, 11, 71, 77)        #Should I takeo out 71 or 77?
-        # Need to know if there are always walls around or if we have to check the size of the state to not throwing an error
+        if packman_row == None:
+            return tuple(allowed_lst)
+        allowed_field = (10, 11)
         if state[packman_row + 1][packman_col] in allowed_field:
-            allowed_lst.append("U")
-        if state[packman_row - 1][packman_col] in allowed_field:
             allowed_lst.append("D")
+        if state[packman_row - 1][packman_col] in allowed_field:
+            allowed_lst.append("U")
         if state[packman_row][packman_col + 1] in allowed_field:
             allowed_lst.append("R")
         if state[packman_row][packman_col - 1] in allowed_field:
             allowed_lst.append("L")
 
         return tuple(allowed_lst)
-
-
-    def find_row_col(self, state, agent):
-        row = None
-        col = None
-        for row in state:
-            if agent in row:
-                row = state.index(row)
-                col = row.index(agent)
-        return row, col
 
     def manhattan_distance(self, state, ghost_row, ghost_col, packman_row, packman_col):
         distance = {}
@@ -51,28 +61,29 @@ class PacmanProblem(search.Problem):
         distance["U"] = abs(packman_row - ghost_row - 1) + abs(packman_col - ghost_col)
         smallest = min(distance.items(), key=lambda x: x[1])[0]
         for i in range(4):
-            if distance["R"] == distance[smallest] and self.state[ghost_row][ghost_col + 1] == (77 or 66 or 11 or 10):
+            if distance["R"] == distance[smallest] and state[ghost_row][ghost_col + 1] == (77 or 66 or 11 or 10):
                 return "R"
-            elif distance["D"] == distance[smallest] and self.state[ghost_row + 1][ghost_col] == (77 or 66 or 11 or 10):
+            elif distance["D"] == distance[smallest] and state[ghost_row + 1][ghost_col] == (77 or 66 or 11 or 10):
                 return "D"
-            elif distance["L"] == distance[smallest] and self.state[ghost_row][ghost_col - 1] == (77 or 66 or 11 or 10):
+            elif distance["L"] == distance[smallest] and state[ghost_row][ghost_col - 1] == (77 or 66 or 11 or 10):
                 return "L"
-            elif distance["U"] == distance[smallest] and self.state[ghost_row - 1][ghost_col] == (77 or 66 or 11 or 10):
+            elif distance["U"] == distance[smallest] and state[ghost_row - 1][ghost_col] == (77 or 66 or 11 or 10):
                 return "U"
-            distance.pop(smallest)
+            distance[smallest] = float("inf")
+            smallest = min(distance.items(), key=lambda x: x[1])[0]
 
     def result(self, state, action):
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
         ghosts = {50: [None, None], 40: [None, None], 30: [None, None], 20: [None, None]}
-        packman_row, packman_col = self.find_row_col(self, state, 66)
+        packman_row, packman_col = self.find_row_col(state, 66)
         for i in ghosts.keys():
-            ghosts[i][0], ghosts[i][1] = self.find_row_col(self.state, i)
+            ghosts[i][0], ghosts[i][1] = self.find_row_col(state, i)
             if ghosts[i][0] == None and ghosts[i][1] == None:
-                ghosts[i][0], ghosts[i][1] = self.find_row_col(self.state, i+1)
+                ghosts[i][0], ghosts[i][1] = self.find_row_col(state, i+1)
 
-        state = list(state)
+        state = [list(i) for i in state]
         row_mov = 0
         col_mov = 0
         if action == "R":
@@ -103,7 +114,7 @@ class PacmanProblem(search.Problem):
                 continue
             ghost_row = ghosts[i][0]
             ghost_col = ghosts[i][1]
-            ghost_action = self.manhattan_distance(self, state, ghost_row, ghost_col, packman_row, packman_col)
+            ghost_action = self.manhattan_distance(state, ghost_row, ghost_col, packman_row, packman_col)
 
             row_mov = 0
             col_mov = 0
@@ -117,6 +128,7 @@ class PacmanProblem(search.Problem):
                 row_mov = 1
 
             if state[ghost_row + row_mov][ghost_col + col_mov] == 66:
+                state[ghost_row][ghost_col] = 10
                 state[ghost_row + row_mov][ghost_col + col_mov] = 88
                 break
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 10:
@@ -140,13 +152,6 @@ class PacmanProblem(search.Problem):
                 else:
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = 10
-            elif state[ghost_row + row_mov][ghost_col + col_mov] == 77:
-                if i in ghost_order:
-                    state[ghost_row][ghost_col] = 10
-                    state[ghost_row + row_mov][ghost_col + col_mov] = 10
-                else:
-                    state[ghost_row][ghost_col] = 11
-                    state[ghost_row + row_mov][ghost_col + col_mov] = 10
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 71:
                 if i in ghost_order:
                     state[ghost_row][ghost_col] = 10
@@ -155,7 +160,7 @@ class PacmanProblem(search.Problem):
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = 11
 
-        return tuple(state)
+        return tuple(tuple(i) for i in state)
 
 
     def goal_test(self, state):
@@ -169,6 +174,15 @@ class PacmanProblem(search.Problem):
         """ This is the heuristic. It gets a node (not a state,
         state can be accessed via node.state)
         and returns a goal distance estimate"""
+        pacman_row, packman_col = self.find_row_col(node.state, 66)
+        if pacman_row == None:
+            return float('inf')
+        elif node.state[pacman_row + 1][packman_col] or node.state[pacman_row - 1][packman_col] or node.state[pacman_row][packman_col + 1] or node.state[pacman_row][packman_col - 1] == 51 or 50 or 40 or 41 or 30 or 31 or 20 or 21:
+            return float('inf')
+        else:
+            return self.point_sum(node.state)
+
+
 
     """Feel free to add your own functions"""
 

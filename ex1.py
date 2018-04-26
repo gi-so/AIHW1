@@ -50,15 +50,15 @@ class PacmanProblem(search.Problem):
             allowed_lst.append("R")
         if state[packman_row][packman_col - 1] in allowed_field:
             allowed_lst.append("L")
-
+        
         return tuple(allowed_lst)
 
     def manhattan_distance(self, state, ghost_row, ghost_col, packman_row, packman_col):
         distance = {}
         distance["R"] = abs(packman_row - ghost_row) + abs(packman_col - ghost_col + 1)
         distance["L"] = abs(packman_row - ghost_row) + abs(packman_col - ghost_col - 1)
-        distance["D"] = abs(packman_row - ghost_row + 1) + abs(packman_col - ghost_col)
-        distance["U"] = abs(packman_row - ghost_row - 1) + abs(packman_col - ghost_col)
+        distance["D"] = abs(packman_row - ghost_row - 1) + abs(packman_col - ghost_col)
+        distance["U"] = abs(packman_row - ghost_row + 1) + abs(packman_col - ghost_col)
         smallest = min(distance.items(), key=lambda x: x[1])[0]
         for i in range(4):
             if distance["R"] == distance[smallest] and state[ghost_row][ghost_col + 1] == (77 or 66 or 11 or 10):
@@ -128,12 +128,12 @@ class PacmanProblem(search.Problem):
                 row_mov = 1
 
             if state[ghost_row + row_mov][ghost_col + col_mov] == 66:
-                state[ghost_row][ghost_col] = 10
+                state[ghost_row][ghost_col] = 10                                #What if there was a dot with the ghost?
                 state[ghost_row + row_mov][ghost_col + col_mov] = 88
                 break
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 10:
                 if i in ghost_order:
-                    state[ghost_row][ghost_col] = 10
+                    state[ghost_row][ghost_col] = 10                            #What if there was a dot with the ghost?
                     state[ghost_row + row_mov][ghost_col + col_mov] = i
                 else:
                     state[ghost_row][ghost_col] = 11

@@ -132,28 +132,28 @@ class PacmanProblem(search.Problem):
                 state[ghost_row + row_mov][ghost_col + col_mov] = 88
                 break
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 10:
-                if i in ghost_row:
+                if i in state[ghost_row]:
                     state[ghost_row][ghost_col] = 10                            #What if there was a dot with the ghost?
                     state[ghost_row + row_mov][ghost_col + col_mov] = i
                 else:
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = i
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 11:
-                if i in ghost_row:
+                if i in state[ghost_row]:
                     state[ghost_row][ghost_col] = 10
                     state[ghost_row + row_mov][ghost_col + col_mov] = i+1
                 else:
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = i+1
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 77:
-                if i in ghost_row:
+                if i in state[ghost_row]:
                     state[ghost_row][ghost_col] = 10
                     state[ghost_row + row_mov][ghost_col + col_mov] = 10
                 else:
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = 10
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 71:
-                if i in ghost_row:
+                if i in state[ghost_row]:
                     state[ghost_row][ghost_col] = 10
                     state[ghost_row + row_mov][ghost_col + col_mov] = 11
                 else:

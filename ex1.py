@@ -57,8 +57,8 @@ class PacmanProblem(search.Problem):
         distance = {}
         distance["R"] = abs(packman_row - ghost_row) + abs(packman_col - ghost_col + 1)
         distance["L"] = abs(packman_row - ghost_row) + abs(packman_col - ghost_col - 1)
-        distance["D"] = abs(packman_row - ghost_row - 1) + abs(packman_col - ghost_col)
-        distance["U"] = abs(packman_row - ghost_row + 1) + abs(packman_col - ghost_col)
+        distance["D"] = abs(packman_row - ghost_row + 1) + abs(packman_col - ghost_col)
+        distance["U"] = abs(packman_row - ghost_row - 1) + abs(packman_col - ghost_col)
         smallest = min(distance.items(), key=lambda x: x[1])[0]
         for i in range(4):
             if distance["R"] == distance[smallest] and state[ghost_row][ghost_col + 1] == (77 or 66 or 11 or 10):
@@ -132,28 +132,28 @@ class PacmanProblem(search.Problem):
                 state[ghost_row + row_mov][ghost_col + col_mov] = 88
                 break
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 10:
-                if i in ghost_order:
+                if i in ghost_row:
                     state[ghost_row][ghost_col] = 10                            #What if there was a dot with the ghost?
                     state[ghost_row + row_mov][ghost_col + col_mov] = i
                 else:
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = i
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 11:
-                if i in ghost_order:
+                if i in ghost_row:
                     state[ghost_row][ghost_col] = 10
                     state[ghost_row + row_mov][ghost_col + col_mov] = i+1
                 else:
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = i+1
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 77:
-                if i in ghost_order:
+                if i in ghost_row:
                     state[ghost_row][ghost_col] = 10
                     state[ghost_row + row_mov][ghost_col + col_mov] = 10
                 else:
                     state[ghost_row][ghost_col] = 11
                     state[ghost_row + row_mov][ghost_col + col_mov] = 10
             elif state[ghost_row + row_mov][ghost_col + col_mov] == 71:
-                if i in ghost_order:
+                if i in ghost_row:
                     state[ghost_row][ghost_col] = 10
                     state[ghost_row + row_mov][ghost_col + col_mov] = 11
                 else:

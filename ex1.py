@@ -6,6 +6,23 @@ import math
 ids = ["935885178", "203609177"]
 
 
+def manhattan_real_distance(packman_row, packman_col, row, col):
+    return abs(packman_row - row) + abs(packman_col - col)
+
+
+def closest_dot_distance(state, pacman_row, packman_col):
+    num_columns = len(state[0])
+    num_rows = len(state)
+    shortest_dist = float('Inf')
+    dot_col = 0
+    for row in state:
+        for col in row:
+            if col == 11:
+                dist = manhattan_real_distance(pacman_row,packman_col,state.index(row),row.index(col))
+                if dist<shortest_dist:
+                    shortest_dist=dist
+    return  shortest_dist
+
 class PacmanProblem(search.Problem):
 
     def find_row_col(self, state, agent):
@@ -21,7 +38,7 @@ class PacmanProblem(search.Problem):
         counter = 0
         for row in state:
             for col in row:
-                if state[row][col] == 11 or 71 or 51 or 41 or 31 or 21:
+                if col in (11, 71, 51, 41, 31, 21):
                     counter = counter + 1
         return counter
 
@@ -50,7 +67,7 @@ class PacmanProblem(search.Problem):
             allowed_lst.append("R")
         if state[packman_row][packman_col - 1] in allowed_field:
             allowed_lst.append("L")
-        
+
         return tuple(allowed_lst)
 
     def manhattan_distance(self, state, ghost_row, ghost_col, packman_row, packman_col):
@@ -170,6 +187,8 @@ class PacmanProblem(search.Problem):
                 return False
         return True
 
+
+
     def h(self, node):
         """ This is the heuristic. It gets a node (not a state,
         state can be accessed via node.state)
@@ -177,10 +196,12 @@ class PacmanProblem(search.Problem):
         pacman_row, packman_col = self.find_row_col(node.state, 66)
         if pacman_row == None:
             return float('inf')
-        elif node.state[pacman_row + 1][packman_col] or node.state[pacman_row - 1][packman_col] or node.state[pacman_row][packman_col + 1] or node.state[pacman_row][packman_col - 1] == 51 or 50 or 40 or 41 or 30 or 31 or 20 or 21:
+        elif node.state[pacman_row + 1][packman_col] in (51, 50, 40, 41, 30, 31, 20, 21) or node.state[pacman_row - 1][packman_col] in (51, 50, 40, 41, 30, 31, 20, 21) or node.state[pacman_row][packman_col + 1] in (51, 50, 40, 41, 30, 31, 20, 21) or node.state[pacman_row][packman_col - 1] in (51, 50, 40, 41, 30, 31, 20, 21):
             return float('inf')
         else:
-            return self.point_sum(node.state)
+            points_left = self.point_sum(node.state)
+            #closest_dot_dist = closest_dot_distance(node.state, pacman_row,packman_col)
+            return (points_left)
 
 
 

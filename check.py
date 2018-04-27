@@ -15,7 +15,7 @@ def timeout_exec(func, args=(), kwargs={}, timeout_duration=10, default=None):
             self.result = default
 
         def run(self):
-            # remove try if you want program to abort at error
+             #remove try if you want program to abort at error
             try:
                 self.result = func(*args, **kwargs)
             except Exception as e:
